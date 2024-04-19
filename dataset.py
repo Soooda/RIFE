@@ -107,3 +107,8 @@ class VimeoDataset(Dataset):
         gt = torch.from_numpy(gt.copy()).permute(2, 0, 1)
         timestep = torch.tensor(timestep).reshape(1, 1, 1)
         return torch.cat((img0, img1, gt), 0), timestep
+
+class ATD12KDataset(Dataset):
+    def __init__(self, dataset_name, batch_size=32):
+        self.batch_size = batch_size
+        self.dataset_name = dataset_name
