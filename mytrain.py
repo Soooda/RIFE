@@ -1,9 +1,12 @@
 import argparse
-import os
+import warnings
 import numpy as np
 import math
 import random
 import torch
+import os
+
+warnings.filterwarnings('ignore')
 
 from model.RIFE import Model
 from dataset import ATD12KDataset
@@ -59,6 +62,15 @@ val_data = DataLoader(dataset_val, batch_size=16, pin_memory=True, num_workers=8
 print("Training...")
 step = 0
 for epoch in range(1, epoches + 1):
+    checkpoint = os.sep.join(("checkpoints", str(epoch) + ".pth"))
+    if os.path.exists(checkpoint):
+        if os.path.exists(os.sep.join(("checkpoints", str(epoch + 1) + ".pth"))):
+            continue
+        temp = torch.load(checkpoint)
+        model.load_state_dict(temp["flownet"])
+        step = temp["step"]
+        continue
+    loss = 0.0
     for i, data in enumerate(train_data):
         frames, timestep = data
         frames = frames.to(device)
@@ -67,5 +79,14 @@ for epoch in range(1, epoches + 1):
         gt = frames[:, 6:9]
         learning_rate = get_learning_rate(step)
         pred, info = model.update(imgs, gt, learning_rate, training=True)
-        print('Epoch:{:<3} loss_l1:{:.4e}'.format(epoch, info['loss_l1']))
+        loss += info['loss_l1']
+    print('Epoch:{:<3} loss_l1:{:.4e}'.format(epoch, loss))
+
     model.save_model(log_path)
+    checkpoints = {
+        "flownet": model.flownet.state_dict(),
+        step: step
+    }
+    if not os.path.exists("./checkpoints"):
+        os.mkdir("./checkpoints")
+    torch.save(checkpoints, os.sep.join(("checkpoints", str(epoch) + ".pth")))
