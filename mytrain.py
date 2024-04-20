@@ -50,7 +50,7 @@ def flow2rgb(flow_map_np):
     rgb_map[:, :, 2] += normalized_flow_map[:, :, 1]
     return rgb_map.clip(0, 1)
 
-model = Model().to(device)
+model = Model()
 dataset = ATD12KDataset(args.train_root, train=True)
 train_data = DataLoader(dataset, batch_size=batch_size, num_workers=8, pin_memory=True)
 dataset_val = ATD12KDataset(args.eval_root, train=False)
