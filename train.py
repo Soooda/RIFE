@@ -16,7 +16,7 @@ from torch.utils.data.distributed import DistributedSampler
 
 device = torch.device("cuda")
 
-log_path = 'train_log'
+log_path = 'checkpoints'
 
 def get_learning_rate(step):
     if step < 2000:
@@ -45,11 +45,11 @@ def train(model, local_rank):
         writer_val = None
     step = 0
     nr_eval = 0
-    dataset = VimeoDataset('train')
+    dataset = ATD12KDataset(args.train_root, train=True)
     sampler = DistributedSampler(dataset)
     train_data = DataLoader(dataset, batch_size=args.batch_size, num_workers=8, pin_memory=True, drop_last=True, sampler=sampler)
     args.step_per_epoch = train_data.__len__()
-    dataset_val = VimeoDataset('validation')
+    dataset_val = ATD12KDataset(args.eval_root, train=False)
     val_data = DataLoader(dataset_val, batch_size=16, pin_memory=True, num_workers=8)
     print('training...')
     time_stamp = time.time()
@@ -141,6 +141,8 @@ if __name__ == "__main__":
     parser.add_argument('--batch_size', default=16, type=int, help='minibatch size')
     parser.add_argument('--local_rank', default=0, type=int, help='local rank')
     parser.add_argument('--world_size', default=4, type=int, help='world size')
+    parser.add_argument('--train_root', type=str)
+    parser.add_argument('--eval_root', type=str)
     args = parser.parse_args()
     torch.distributed.init_process_group(backend="nccl", world_size=args.world_size)
     torch.cuda.set_device(args.local_rank)
