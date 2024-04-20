@@ -80,6 +80,7 @@ for epoch in range(1, epoches + 1):
         learning_rate = get_learning_rate(step)
         pred, info = model.update(imgs, gt, learning_rate, training=True)
         loss += info['loss_l1']
+        step += 1
     print('Epoch:{:<3} loss_l1:{:.4e}'.format(epoch, loss))
 
     model.save_model(log_path)
