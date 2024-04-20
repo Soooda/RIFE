@@ -28,6 +28,7 @@ else:
 
 log_path = 'checkpoints'
 epoches = 300
+step_per_epoch = 10000
 batch_size = 16
 
 parser = argparse.ArgumentParser()
@@ -40,7 +41,7 @@ def get_learning_rate(step):
         mul = step / 2000.
         return 3e-4 * mul
     else:
-        mul = np.cos((step - 2000) / (args.epoch * args.step_per_epoch - 2000.) * math.pi) * 0.5 + 0.5
+        mul = np.cos((step - 2000) / (epoches * step_per_epoch - 2000.) * math.pi) * 0.5 + 0.5
         return (3e-4 - 3e-6) * mul + 3e-6
 
 def flow2rgb(flow_map_np):
