@@ -51,7 +51,7 @@ def flow2rgb(flow_map_np):
     return rgb_map.clip(0, 1)
 
 model = Model()
-dataset = ATD12KDataset(args.train_root, train=True)
+dataset = ATD12KDataset(args.train_root, randomCropSize=(224, 224), train=True)
 train_data = DataLoader(dataset, batch_size=batch_size, num_workers=8, pin_memory=True)
 dataset_val = ATD12KDataset(args.eval_root, train=False)
 val_data = DataLoader(dataset_val, batch_size=16, pin_memory=True, num_workers=8)
