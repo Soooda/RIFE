@@ -1,10 +1,13 @@
 import os
 import cv2
+from PIL import Image
 import ast
 import torch
 import numpy as np
 import random
 from torch.utils.data import DataLoader, Dataset
+from torchvision.transforms import v2
+import torchvision.transforms.v2.functional as TF
 
 cv2.setNumThreads(1)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -109,6 +112,59 @@ class VimeoDataset(Dataset):
         return torch.cat((img0, img1, gt), 0), timestep
 
 class ATD12KDataset(Dataset):
-    def __init__(self, dataset_name, batch_size=32):
-        self.batch_size = batch_size
-        self.dataset_name = dataset_name
+    def __init__(self, root, resizeSize=(960, 540), randomCropSize=(380, 380), train=True):
+        self.root = root
+        self.train = train
+        self.names = os.listdir(root)
+        self.resizeSize = resizeSize
+        self.randomCropSize = randomCropSize
+
+    def transform(self, frames):
+        ret = []
+        for frame in frames:
+            if self.train:
+                # Resize
+                resize = v2.Resize(self.resizeSize)
+                frame = resize(frame)
+                # Random Crop
+                i, j, h, w = v2.RandomCrop.get_params(frame, output_size=self.randomCropSize)
+                frame = TF.crop(frame, i, j, h, w)
+                # Random horizontal flipping
+                if random.random() > 0.5:
+                    frame = TF.hflip(frame)
+                # Random vertical flipping
+                if random.random() > 0.5:
+                    frame = TF.vflip(frame)
+                # Random rotation
+                p = random.uniform(0, 1)
+                if p < 0.25:
+                    frame = TF.rotate(frame, 90)
+                elif p < 0.5:
+                    frame = TF.rotate(frame, 180)
+                elif p < 0.75:
+                    frame = TF.rotate(frame, -90)
+            frame = TF.to_tensor(frame)
+            ret.append(frame)
+        return ret
+                
+
+    def __repr__(self):
+        fmt_str = 'Dataset ' + self.__class__.__name__ + '\n'
+        fmt_str += '    Number of datapoints: {}\n'.format(self.__len__())
+        fmt_str += '    Root Location: {}\n'.format(self.root)
+        tmp = '    Transforms (if any): '
+        fmt_str += '{0}{1}\n'.format(tmp, self.transform.__repr__().replace('\n', '\n' + ' ' * len(tmp)))
+        return fmt_str
+
+    def __len__(self):
+        return len(self.names)
+
+    def __getitem__(self, index):
+        path = self.names[index]
+        frame0 = Image.open(os.path.join(self.root, path, "frame1.jpg"))
+        gt = Image.open(os.path.join(self.root, path, "frame2.jpg"))
+        frame1 = Image.open(os.path.join(self.root, path, "frame3.jpg"))
+        frames = tuple(self.transform((frame0, frame1, gt)))
+        timestep = 0.5
+        timestep = torch.tensor(timestep).reshape(1, 1, 1)
+        return torch.cat(frames, 0), timestep
