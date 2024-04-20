@@ -87,7 +87,7 @@ for epoch in range(1, epoches + 1):
     model.save_model(log_path)
     checkpoints = {
         "flownet": model.flownet.state_dict(),
-        step: step
+        "step": step
     }
     if not os.path.exists("./checkpoints"):
         os.mkdir("./checkpoints")
