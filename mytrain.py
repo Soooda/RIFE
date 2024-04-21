@@ -67,7 +67,7 @@ for epoch in range(1, epoches + 1):
     if os.path.exists(checkpoint):
         if os.path.exists(os.sep.join(("checkpoints", str(epoch + 1) + ".pth"))):
             continue
-        temp = torch.load(checkpoint)
+        temp = torch.load(checkpoint, map_location=device)
         model.flownet.load_state_dict(temp["flownet"])
         step = temp["step"]
         continue

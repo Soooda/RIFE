@@ -77,36 +77,40 @@ assert args.scale in [0.25, 0.5, 1.0, 2.0, 4.0]
 if not args.img is None:
     args.png = True
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-torch.set_grad_enabled(False)
-if torch.cuda.is_available():
+if torch.backends.mps.is_available():
+    device = torch.device("mps")
+elif torch.cuda.is_available():
+    device = torch.device("cuda")
     torch.backends.cudnn.enabled = True
     torch.backends.cudnn.benchmark = True
     if(args.fp16):
         torch.set_default_tensor_type(torch.cuda.HalfTensor)
+else:
+    device = torch.device("cpu")
+torch.set_grad_enabled(False)
 
-try:
-    try:
-        try:
-            from model.RIFE_HDv2 import Model
-            model = Model()
-            model.load_model(args.modelDir, -1)
-            print("Loaded v2.x HD model.")
-        except:
-            from train_log.RIFE_HDv3 import Model
-            model = Model()
-            model.load_model(args.modelDir, -1)
-            print("Loaded v3.x HD model.")
-    except:
-        from model.RIFE_HD import Model
-        model = Model()
-        model.load_model(args.modelDir, -1)
-        print("Loaded v1.x HD model")
-except:
-    from model.RIFE import Model
-    model = Model()
-    model.load_model(args.modelDir, -1)
-    print("Loaded ArXiv-RIFE model")
+# try:
+#     try:
+#         try:
+#             from model.RIFE_HDv2 import Model
+#             model = Model()
+#             model.load_model(args.modelDir, -1)
+#             print("Loaded v2.x HD model.")
+#         except:
+#             from train_log.RIFE_HDv3 import Model
+#             model = Model()
+#             model.load_model(args.modelDir, -1)
+#             print("Loaded v3.x HD model.")
+#     except:
+#         from model.RIFE_HD import Model
+#         model = Model()
+#         model.load_model(args.modelDir, -1)
+#         print("Loaded v1.x HD model")
+# except:
+from model.RIFE import Model
+model = Model()
+model.load_model(args.modelDir, -1)
+print("Loaded ArXiv-RIFE model")
 model.eval()
 model.device()
 

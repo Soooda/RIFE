@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import numpy as np
+import os
 from torch.optim import AdamW
 import torch.optim as optim
 import itertools
@@ -13,7 +14,12 @@ from model.loss import *
 from model.laplacian import *
 from model.refine import *
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+if torch.backends.mps.is_available():
+    device = torch.device("mps")
+elif torch.cuda.is_available():
+    device = torch.device("cuda")
+else:
+    device = torch.device("cpu")
     
 class Model:
     def __init__(self, local_rank=-1, arbitrary=False):
@@ -39,15 +45,16 @@ class Model:
         self.flownet.to(device)
 
     def load_model(self, path, rank=0):
-        def convert(param):
-            return {
-            k.replace("module.", ""): v
-                for k, v in param.items()
-                if "module." in k
-            }
+        # def convert(param):
+        #     return {
+        #     k.replace("module.", ""): v
+        #         for k, v in param.items()
+        #         if "module." in k
+        #     }
             
-        if rank <= 0:
-            self.flownet.load_state_dict(convert(torch.load('{}/flownet.pkl'.format(path))))
+        # if rank <= 0:
+        #     self.flownet.load_state_dict(convert(torch.load('{}/flownet.pkl'.format(path),map_location=device)))
+        self.flownet.load_state_dict(torch.load(os.path.join(path, "flownet.pkl"), map_location=device))
         
     def save_model(self, path, rank=0):
         if rank == 0:
