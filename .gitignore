@@ -5,6 +5,7 @@
 *.pkl
 output/*
 train_log/*
+checkpoints/*
 *.mp4
 
 test/
