@@ -281,6 +281,9 @@ if args.montage:
     write_buffer.put(np.concatenate((lastframe, lastframe), 1))
 else:
     write_buffer.put(lastframe)
+
+write_buffer.put(None)
+
 import time
 while(not write_buffer.empty()):
     time.sleep(0.1)
