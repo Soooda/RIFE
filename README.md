@@ -2,11 +2,13 @@
 ## Introduction
 This project is the implement of [Real-Time Intermediate Flow Estimation for Video Frame Interpolation](https://arxiv.org/abs/2011.06294). Currently, our model can run 30+FPS for 2X 720p interpolation on a 2080Ti GPU. It supports arbitrary-timestep interpolation between a pair of images.
 
-**2023.11 - We recently release new [v4.7-4.10](https://github.com/hzwer/Practical-RIFE/tree/main#model-list) optimized for anime scenes!** 🎉 We draw from [SAFA](https://github.com/megvii-research/WACV2024-SAFA/tree/main)’s research.
+**2024.08 - We find that [4.22.lite](https://github.com/hzwer/Practical-RIFE/tree/main?tab=readme-ov-file#model-list) is quite suitable for post-processing of [some diffusion model generated videos](https://drive.google.com/drive/folders/1hSzUn10Era3JCaVz0Z5Eg4wT9R6eJ9U9?usp=sharing).**
+
+2023.11 - We recently release new [v4.7-4.10](https://github.com/hzwer/Practical-RIFE/tree/main#model-list) optimized for anime scenes! We draw from [SAFA](https://github.com/megvii-research/WACV2024-SAFA/tree/main)’s research.
 
 2022.7.4 - Our paper is accepted by ECCV2022. Thanks to all relevant authors, contributors and users!
 
-From 2020 to 2022, we submitted RIFE for five submissions（rejected by CVPR21 ICCV21 AAAI22 CVPR22). Thanks to all anonymous reviewers, your suggestions have helped to significantly improve the paper! -> [author website](https://github.com/hzwer)
+From 2020 to 2022, we submitted RIFE for five submissions（rejected by CVPR21 ICCV21 AAAI22 CVPR22). Thanks to all anonymous reviewers, your suggestions have helped to significantly improve the paper!
 
 [ECCV Poster](https://drive.google.com/file/d/1xCXuLUCSwhN61kvIF8jxDvQiUGtLK0kN/view?usp=sharing) | [ECCV 5-min presentation](https://youtu.be/qdp-NYqWQpA) | [论文中文介绍](https://zhuanlan.zhihu.com/p/568553080) | [rebuttal (2WA1WR->3WA)](https://drive.google.com/file/d/16IVjwRpwbTuJbYyTn4PizKX8I257QxY-/view?usp=sharing)
 
@@ -26,7 +28,7 @@ From 2020 to 2022, we submitted RIFE for five submissions（rejected by CVPR21 I
 
 We are not responsible for and participating in the development of above software. According to the open source license, we respect the commercial behavior of other developers.
 
-[VapourSynth-RIFE](https://github.com/HolyWu/vs-rife) | [RIFE-ncnn-vulkan](https://github.com/nihui/rife-ncnn-vulkan) | [VapourSynth-RIFE-ncnn-Vulkan](https://github.com/HomeOfVapourSynthEvolution/VapourSynth-RIFE-ncnn-Vulkan) 
+[VapourSynth-RIFE](https://github.com/HolyWu/vs-rife) | [RIFE-ncnn-vulkan](https://github.com/nihui/rife-ncnn-vulkan) | [VapourSynth-RIFE-ncnn-Vulkan](https://github.com/styler00dollar/VapourSynth-RIFE-ncnn-Vulkan) | [vs-mlrt](https://github.com/AmusementClub/vs-mlrt)
 
 <img src="https://api.star-history.com/svg?repos=megvii-research/ECCV2022-RIFE,Justin62628/Squirrel-RIFE,n00mkrad/flowframes,nihui/rife-ncnn-vulkan,hzwer/Practical-RIFE&type=Date" height="320" width="480" />
 
@@ -79,9 +81,9 @@ python3 inference_video.py --video=video.mp4 --montage --png
 ```
 (if you want to montage the origin video and save the png format output)
 
-**Optical Flow Estimation**
+**Extended Application**
 
-You may refer to [#278](https://github.com/megvii-research/ECCV2022-RIFE/issues/278#event-7199085190).
+You may refer to [#278](https://github.com/megvii-research/ECCV2022-RIFE/issues/278#event-7199085190) for **Optical Flow Estimation** and refer to [#291](https://github.com/hzwer/ECCV2022-RIFE/issues/291#issuecomment-1328685348) for **Video Stitching**.
 
 **Image Interpolation**
 
