@@ -45,16 +45,16 @@ class Model:
         self.flownet.to(device)
 
     def load_model(self, path, rank=0):
-        # def convert(param):
-        #     return {
-        #     k.replace("module.", ""): v
-        #         for k, v in param.items()
-        #         if "module." in k
-        #     }
-            
-        # if rank <= 0:
-        #     self.flownet.load_state_dict(convert(torch.load('{}/flownet.pkl'.format(path),map_location=device)))
-        self.flownet.load_state_dict(torch.load(os.path.join(path, "flownet.pkl"), map_location=device))
+        def convert(param):
+            return {
+            k.replace("module.", ""): v
+                for k, v in param.items()
+                if "module." in k
+            }
+
+        if rank <= 0:
+            self.flownet.load_state_dict(convert(torch.load('{}/flownet.pkl'.format(path), map_location=device)))
+        # self.flownet.load_state_dict(torch.load(os.path.join(path, "flownet.pkl"), map_location=device))
         
     def save_model(self, path, rank=0):
         if rank == 0:
