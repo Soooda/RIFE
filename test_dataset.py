@@ -1,8 +1,8 @@
 '''
 Evaluate Datasets
 '''
-Name = "ATD-12K"
-path = '/home/michael/hilbert/Desktop/Datasets/atd-12k/test_2k_540p/'
+Name = "STD-12K"
+path = '/home/soda/Dataset/STD_12k/test_2k/'
 
 exp = 4
 # inference ratio between two images with 0 - 1 range
@@ -112,7 +112,7 @@ for triplet in os.listdir(path):
         os.makedirs('output/' + Name + "/" + triplet)
 
     for i in range(1, len(img_list) + 1):
-        cv2.imwrite('output/' + Name + '/' + triplet + '/' + 'frame{}.png'.format(i), (img_list[i][0] * 255).byte().cpu().numpy().transpose(1, 2, 0)[:h, :w])
+        cv2.imwrite('output/' + Name + '/' + triplet + '/' + 'frame{}.png'.format(i), (img_list[i-1][0] * 255).byte().cpu().numpy().transpose(1, 2, 0)[:h, :w])
 
     print(f"\rProcessing {triplet} {index} / {l}", end="")
     index += 1

@@ -27,7 +27,7 @@ else:
     device = torch.device("cpu")
 
 log_path = 'checkpoints'
-epoches = 300
+epoches = 50
 step_per_epoch = 10000
 batch_size = 16
 
@@ -63,14 +63,6 @@ val_data = DataLoader(dataset_val, batch_size=16, pin_memory=True, num_workers=8
 print("Training...")
 step = 0
 for epoch in range(1, epoches + 1):
-    checkpoint = os.sep.join(("checkpoints", str(epoch) + ".pth"))
-    if os.path.exists(checkpoint):
-        if os.path.exists(os.sep.join(("checkpoints", str(epoch + 1) + ".pth"))):
-            continue
-        temp = torch.load(checkpoint, map_location=device)
-        model.flownet.load_state_dict(temp["flownet"])
-        step = temp["step"]
-        continue
     loss = 0.0
     for i, data in enumerate(train_data):
         frames, timestep = data
@@ -84,11 +76,6 @@ for epoch in range(1, epoches + 1):
         step += 1
     print('Epoch:{:<3} loss_l1:{:.4e}'.format(epoch, loss))
 
-    model.save_model(log_path)
-    checkpoints = {
-        "flownet": model.flownet.state_dict(),
-        "step": step
-    }
-    if not os.path.exists("./checkpoints"):
-        os.mkdir("./checkpoints")
-    torch.save(checkpoints, os.sep.join(("checkpoints", str(epoch) + ".pth")))
+    if not os.path.exists(os.path.join(log_path, str(epoch))):
+        os.mkdir(os.path.join(log_path, str(epoch)))
+    model.save_model(os.path.join(log_path, str(epoch)))
