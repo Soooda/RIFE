@@ -1,5 +1,7 @@
 import os
 import cv2
+from PIL import Image
+import numpy as np
 import torch
 import argparse
 from torch.nn import functional as F
@@ -15,7 +17,7 @@ if torch.cuda.is_available():
 parser = argparse.ArgumentParser(description='Interpolation for a pair of images')
 parser.add_argument('--img', dest='img', nargs=2, required=True)
 parser.add_argument('--out', type=str, required=True)
-parser.add_argument('--exp', default=4, type=int)
+parser.add_argument('--exp', default=1, type=int)
 parser.add_argument('--ratio', default=0, type=float, help='inference ratio between two images with 0 - 1 range')
 parser.add_argument('--rthreshold', default=0.02, type=float, help='returns image when actual ratio falls in given range threshold')
 parser.add_argument('--rmaxcycles', default=8, type=int, help='limit max number of bisectional cycles')
@@ -46,8 +48,10 @@ except:
     print("Loaded ArXiv-RIFE model")
 model.eval()
 model.device()
-img0 = cv2.imread(args.img[0], cv2.IMREAD_UNCHANGED)
-img1 = cv2.imread(args.img[1], cv2.IMREAD_UNCHANGED)
+img0 = Image.open(args.img[0])
+img1 = Image.open(args.img[1])
+img0 = np.array(img0)
+img1 = np.array(img1)
 img0 = (torch.tensor(img0.transpose(2, 0, 1)).to(device) / 255.).unsqueeze(0)
 img1 = (torch.tensor(img1.transpose(2, 0, 1)).to(device) / 255.).unsqueeze(0)
 n, c, h, w = img0.shape
